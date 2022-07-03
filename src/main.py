@@ -8,15 +8,15 @@ app = FastAPI()
 app.include_router(api_router_v1, prefix="/api/v1")
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def root():
     return {"message": "RangeConnectBackend - Please see the API docs!"}
 
-@app.get("/healthz", status_code=200)
+@app.get("/healthz", status_code=200, tags=["Deployment"])
 async def healthz():
     return {"message": "Application ready"}
 
-@app.get("/metrics", status_code=200)
+@app.get("/metrics", status_code=200, tags=["Deployment"])
 async def metrics():
     return {"message": "Lots of metrics here"}
 
