@@ -10,5 +10,13 @@ app.include_router(api_router_v1, prefix="/api/v1")
 
 @app.get("/")
 async def root():
-    return {"message": "Hello RangeConnectBackend - Please see the API docs!"}
-    
+    return {"message": "RangeConnectBackend - Please see the API docs!"}
+
+@app.get("/healthz", status_code=200)
+async def healthz():
+    return {"message": "Application ready"}
+
+@app.get("/metrics", status_code=200)
+async def metrics():
+    return {"message": "Lots of metrics here"}
+
