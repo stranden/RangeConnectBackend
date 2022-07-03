@@ -3,7 +3,30 @@ from fastapi import FastAPI
 from routes.v1.api import api_router as api_router_v1
 
 
-app = FastAPI()
+description = """
+RangeConnectBackend API helps you do awesome stuff.
+
+## Items
+
+You can **read items**.
+
+## Users
+
+You will be able to:
+
+* **Create users** (_not implemented_).
+* **Read users** (_not implemented_).
+"""
+
+app = FastAPI(
+    title="RangeConnectBackend",
+    description=description,
+    version="0.0.1",
+    license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT",
+    }
+)
 
 app.include_router(api_router_v1, prefix="/api/v1")
 
