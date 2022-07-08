@@ -1,6 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from routes.v1.api import api_router as api_router_v1
+from settings import Settings
+from util import logging
 
 
 description = """
@@ -25,15 +29,12 @@ app = FastAPI(
     license_info={
         "name": "MIT License",
         "url": "https://opensource.org/licenses/MIT",
-    }
+    },
+    docs_url="/docs",
+    redoc_url=None
 )
 
 app.include_router(api_router_v1, prefix="/api/v1")
-
-
-@app.get("/", include_in_schema=False)
-async def root():
-    return {"message": "RangeConnectBackend - Please see the API docs!"}
 
 @app.get("/healthz", status_code=200, tags=["Deployment"])
 async def healthz():
@@ -43,3 +44,13 @@ async def healthz():
 async def metrics():
     return {"message": "Lots of metrics here"}
 
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+    data = await request.json()
+    logging.error(f"{request}: {data}")
+    logging.error(f"{request}: {exc_str}")
+    content = {'status_code': 10422, 'message': exc_str, 'data': None}
+
+    return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)

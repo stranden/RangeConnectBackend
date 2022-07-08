@@ -1,4 +1,6 @@
 import os
+from pydantic import BaseSettings
+
 
 # RabbitMQ
 RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", default="localhost")
@@ -12,3 +14,8 @@ DB_PASS = os.environ.get("DB_PASS")
 DB_HOST = os.environ.get("DB_HOST")
 DB_NAME = os.environ.get("DB_NAME")
 DB_URI = f"postgres://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
+
+
+class Settings(BaseSettings):
+    database_connection_uri: str
+    amqp_connection_uri: str
