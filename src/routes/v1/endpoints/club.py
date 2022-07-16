@@ -4,11 +4,13 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Response
 from fastapi.exceptions import HTTPException
-
+from models.club import (
+    ClubRequest
+)
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/", response_model=ClubRequest)
 async def club():
     return {"message": "GET All clubs"}
 

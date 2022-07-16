@@ -1,0 +1,22 @@
+version: '3'
+
+volumes:
+  db-data:
+    driver: local
+
+services:
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: rangeconnectuser # The PostgreSQL user (useful to connect to the database)
+      POSTGRES_PASSWORD: rangeconnectpassword # The PostgreSQL password (useful to connect to the database)
+      POSTGRES_DB: rangeconnectdb # The PostgreSQL default database (automatically created at first launch)
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

@@ -36,7 +36,7 @@ app = FastAPI(
 
 app.include_router(api_router_v1, prefix="/api/v1")
 
-@app.get("/healthz", status_code=200, tags=["Deployment"])
+@app.get("/healthz", tags=["Deployment"])
 async def healthz():
     return {"message": "Application ready"}
 
