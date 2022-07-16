@@ -17,3 +17,4 @@ async def club():
 @router.get("/{club_id}")
 async def club_by_id(club_id):
     return {"message": "GET specific club with ID", "club": club_id}
+    

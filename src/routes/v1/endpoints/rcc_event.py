@@ -11,3 +11,4 @@ router = APIRouter()
 @router.get("/", tags=["RangeConnectClient"])
 async def rcc_event():
     return {"message": "Some logic to RCC events"}
+    
