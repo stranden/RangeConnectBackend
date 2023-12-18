@@ -36,6 +36,10 @@ app = FastAPI(
 
 app.include_router(api_router_v1, prefix="/api/v1")
 
+@app.get("/")
+async def root():
+    return {"message": "RangeConnectBackend have been started! - Please consult /docs"}
+
 @app.get("/healthz", tags=["Deployment"])
 async def healthz():
     return {"message": "Application ready"}
