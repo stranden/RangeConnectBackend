@@ -1,21 +1,15 @@
 version: '3.8'
 services:
-  rangeconnectserver:
+  rangeconnectbackend:
     build: .
-    hostname: 'rangeconnectserver'
-    container_name: 'rangeconnectserver'
+    hostname: 'rangeconnectbackend'
+    container_name: 'rangeconnectbackend'
     restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
     environment:
-      - RABBITMQ_HOST=192.168.234.118
-      - RABBITMQ_USER=rangeconnect
-      - RABBITMQ_PASS=Uivq9ACXS49W
-      - DATABASE_HOST=postgres
+      - DATABASE_HOST=192.168.234.118
       - DATABASE_USER=rangeconnect
       - DATABASE_PASS=rangeconnect
       - DATABASE_DB=rangeconnect
-      - DATABASE_SCHEMA=rangeconnect
-    networks:
-      - range-connect
+      - DATABASE_SCHEMA=backend
+    ports:
+      - 8000:8000

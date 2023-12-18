@@ -1,4 +1,7 @@
-fastapi==0.105.*
-SQLAlchemy==2.0.*
 alembic==1.13.*
+fastapi==0.105.*
 psycopg2-binary==2.9.*
+pydantic==2.5.*
+pydantic-settings==2.1.*
+SQLAlchemy==2.0.*
+uvicorn==0.24.*

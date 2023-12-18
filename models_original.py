@@ -77,17 +77,6 @@ class ShootingRange(Base):
     first_lane = Column(String, nullable=False)
 
 
-class ShootingRange(Base):
-    __tablename__ = "shooting_range"
-
-    id = Column(postgresql.UUID(as_uuid=True), primary_key=True, unique=True, index=True, default=uuid.uuid4)
-    shooting_club = Column(postgresql.UUID(as_uuid=True), ForeignKey("shooting_club.id"), nullable=True, index=True)
-    manufactor = Column(postgresql.UUID(as_uuid=True), ForeignKey("manufactor.id"), nullable=True, index=True)
-    name = Column(String, nullable=False)
-    lanes = Column(Integer, nullable=False)
-    first_lane = Column(String, nullable=False)
-
-
 class RangeEventShooter(AuditMixin, Base):
     __tablename__ = "range_event_shooter"
 
