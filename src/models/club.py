@@ -4,6 +4,9 @@ from pydantic import BaseModel, Field
 
 class ClubRequest(BaseModel):
     id: UUID
+    country: UUID
     name: str
     shortname: str
-    country: int
+    
+    class Config:
+        orm_mode = True
