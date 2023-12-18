@@ -7,6 +7,6 @@ class ClubRequest(BaseModel):
     country: UUID
     name: str
     shortname: str
-    
+
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -34,7 +34,9 @@ app = FastAPI(
     redoc_url=None
 )
 
-@app.get("/")
+app.include_router(api_router_v1, prefix="/api/v1")
+
+@app.get("/", include_in_schema=False)
 async def root():
     return {"message": "RangeConnectBackend have been started correctly!"}
 
@@ -45,8 +47,6 @@ async def healthz():
 @app.get("/metrics", status_code=200, tags=["Deployment"])
 async def metrics():
     return {"message": "Lots of metrics here"}
-
-app.include_router(api_router_v1, prefix="/api/v1")
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
