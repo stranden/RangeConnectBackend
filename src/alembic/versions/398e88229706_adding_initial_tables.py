@@ -23,18 +23,18 @@ def upgrade() -> None:
     sa.Column('code', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    schema='backend'
+    schema='rcb'
     )
-    op.create_index(op.f('ix_backend_country_id'), 'country', ['id'], unique=True, schema='backend')
+    op.create_index(op.f('ix_rcb_country_id'), 'country', ['id'], unique=True, schema='rcb')
     op.create_table('range_manufactor',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('created_date', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
     sa.Column('modified_date', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    schema='backend'
+    schema='rcb'
     )
-    op.create_index(op.f('ix_backend_range_manufactor_id'), 'range_manufactor', ['id'], unique=True, schema='backend')
+    op.create_index(op.f('ix_rcb_range_manufactor_id'), 'range_manufactor', ['id'], unique=True, schema='rcb')
     op.create_table('shooting_club',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('country', sa.UUID(), nullable=False),
@@ -42,14 +42,14 @@ def upgrade() -> None:
     sa.Column('shortname', sa.String(), nullable=True),
     sa.Column('created_date', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
     sa.Column('modified_date', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
-    sa.ForeignKeyConstraint(['country'], ['backend.country.id'], ),
+    sa.ForeignKeyConstraint(['country'], ['rcb.country.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name'),
     sa.UniqueConstraint('shortname'),
-    schema='backend'
+    schema='rcb'
     )
-    op.create_index(op.f('ix_backend_shooting_club_country'), 'shooting_club', ['country'], unique=False, schema='backend')
-    op.create_index(op.f('ix_backend_shooting_club_id'), 'shooting_club', ['id'], unique=True, schema='backend')
+    op.create_index(op.f('ix_rcb_shooting_club_country'), 'shooting_club', ['country'], unique=False, schema='rcb')
+    op.create_index(op.f('ix_rcb_shooting_club_id'), 'shooting_club', ['id'], unique=True, schema='rcb')
     op.create_table('event',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('shooting_club', sa.UUID(), nullable=True),
@@ -57,12 +57,12 @@ def upgrade() -> None:
     sa.Column('startdate', sa.TIMESTAMP(), nullable=False),
     sa.Column('enddate', sa.TIMESTAMP(), nullable=False),
     sa.Column('status', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['shooting_club'], ['backend.shooting_club.id'], ),
+    sa.ForeignKeyConstraint(['shooting_club'], ['rcb.shooting_club.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    schema='backend'
+    schema='rcb'
     )
-    op.create_index(op.f('ix_backend_event_id'), 'event', ['id'], unique=True, schema='backend')
-    op.create_index(op.f('ix_backend_event_shooting_club'), 'event', ['shooting_club'], unique=False, schema='backend')
+    op.create_index(op.f('ix_rcb_event_id'), 'event', ['id'], unique=True, schema='rcb')
+    op.create_index(op.f('ix_rcb_event_shooting_club'), 'event', ['shooting_club'], unique=False, schema='rcb')
     op.create_table('shooting_range',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('shooting_club', sa.UUID(), nullable=True),
@@ -70,47 +70,47 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('lanes', sa.Integer(), nullable=False),
     sa.Column('first_lane', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['range_manufactor'], ['backend.range_manufactor.id'], ),
-    sa.ForeignKeyConstraint(['shooting_club'], ['backend.shooting_club.id'], ),
+    sa.ForeignKeyConstraint(['range_manufactor'], ['rcb.range_manufactor.id'], ),
+    sa.ForeignKeyConstraint(['shooting_club'], ['rcb.shooting_club.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    schema='backend'
+    schema='rcb'
     )
-    op.create_index(op.f('ix_backend_shooting_range_id'), 'shooting_range', ['id'], unique=True, schema='backend')
-    op.create_index(op.f('ix_backend_shooting_range_range_manufactor'), 'shooting_range', ['range_manufactor'], unique=False, schema='backend')
-    op.create_index(op.f('ix_backend_shooting_range_shooting_club'), 'shooting_range', ['shooting_club'], unique=False, schema='backend')
+    op.create_index(op.f('ix_rcb_shooting_range_id'), 'shooting_range', ['id'], unique=True, schema='rcb')
+    op.create_index(op.f('ix_rcb_shooting_range_range_manufactor'), 'shooting_range', ['range_manufactor'], unique=False, schema='rcb')
+    op.create_index(op.f('ix_rcb_shooting_range_shooting_club'), 'shooting_range', ['shooting_club'], unique=False, schema='rcb')
     op.create_table('event_range',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('event', sa.UUID(), nullable=True),
     sa.Column('shooting_range', sa.UUID(), nullable=True),
-    sa.ForeignKeyConstraint(['event'], ['backend.event.id'], ),
-    sa.ForeignKeyConstraint(['shooting_range'], ['backend.shooting_range.id'], ),
+    sa.ForeignKeyConstraint(['event'], ['rcb.event.id'], ),
+    sa.ForeignKeyConstraint(['shooting_range'], ['rcb.shooting_range.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    schema='backend'
+    schema='rcb'
     )
-    op.create_index(op.f('ix_backend_event_range_event'), 'event_range', ['event'], unique=False, schema='backend')
-    op.create_index(op.f('ix_backend_event_range_id'), 'event_range', ['id'], unique=True, schema='backend')
-    op.create_index(op.f('ix_backend_event_range_shooting_range'), 'event_range', ['shooting_range'], unique=False, schema='backend')
+    op.create_index(op.f('ix_rcb_event_range_event'), 'event_range', ['event'], unique=False, schema='rcb')
+    op.create_index(op.f('ix_rcb_event_range_id'), 'event_range', ['id'], unique=True, schema='rcb')
+    op.create_index(op.f('ix_rcb_event_range_shooting_range'), 'event_range', ['shooting_range'], unique=False, schema='rcb')
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_index(op.f('ix_backend_event_range_shooting_range'), table_name='event_range', schema='backend')
-    op.drop_index(op.f('ix_backend_event_range_id'), table_name='event_range', schema='backend')
-    op.drop_index(op.f('ix_backend_event_range_event'), table_name='event_range', schema='backend')
-    op.drop_table('event_range', schema='backend')
-    op.drop_index(op.f('ix_backend_shooting_range_shooting_club'), table_name='shooting_range', schema='backend')
-    op.drop_index(op.f('ix_backend_shooting_range_range_manufactor'), table_name='shooting_range', schema='backend')
-    op.drop_index(op.f('ix_backend_shooting_range_id'), table_name='shooting_range', schema='backend')
-    op.drop_table('shooting_range', schema='backend')
-    op.drop_index(op.f('ix_backend_event_shooting_club'), table_name='event', schema='backend')
-    op.drop_index(op.f('ix_backend_event_id'), table_name='event', schema='backend')
-    op.drop_table('event', schema='backend')
-    op.drop_index(op.f('ix_backend_shooting_club_id'), table_name='shooting_club', schema='backend')
-    op.drop_index(op.f('ix_backend_shooting_club_country'), table_name='shooting_club', schema='backend')
-    op.drop_table('shooting_club', schema='backend')
-    op.drop_index(op.f('ix_backend_range_manufactor_id'), table_name='range_manufactor', schema='backend')
-    op.drop_table('range_manufactor', schema='backend')
-    op.drop_index(op.f('ix_backend_country_id'), table_name='country', schema='backend')
-    op.drop_table('country', schema='backend')
+    op.drop_index(op.f('ix_rcb_event_range_shooting_range'), table_name='event_range', schema='rcb')
+    op.drop_index(op.f('ix_rcb_event_range_id'), table_name='event_range', schema='rcb')
+    op.drop_index(op.f('ix_rcb_event_range_event'), table_name='event_range', schema='rcb')
+    op.drop_table('event_range', schema='rcb')
+    op.drop_index(op.f('ix_rcb_shooting_range_shooting_club'), table_name='shooting_range', schema='rcb')
+    op.drop_index(op.f('ix_rcb_shooting_range_range_manufactor'), table_name='shooting_range', schema='rcb')
+    op.drop_index(op.f('ix_rcb_shooting_range_id'), table_name='shooting_range', schema='rcb')
+    op.drop_table('shooting_range', schema='rcb')
+    op.drop_index(op.f('ix_rcb_event_shooting_club'), table_name='event', schema='rcb')
+    op.drop_index(op.f('ix_rcb_event_id'), table_name='event', schema='rcb')
+    op.drop_table('event', schema='rcb')
+    op.drop_index(op.f('ix_rcb_shooting_club_id'), table_name='shooting_club', schema='rcb')
+    op.drop_index(op.f('ix_rcb_shooting_club_country'), table_name='shooting_club', schema='rcb')
+    op.drop_table('shooting_club', schema='rcb')
+    op.drop_index(op.f('ix_rcb_range_manufactor_id'), table_name='range_manufactor', schema='rcb')
+    op.drop_table('range_manufactor', schema='rcb')
+    op.drop_index(op.f('ix_rcb_country_id'), table_name='country', schema='rcb')
+    op.drop_table('country', schema='rcb')
     # ### end Alembic commands ###

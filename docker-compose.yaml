@@ -10,6 +10,5 @@ services:
       - DATABASE_USER=rangeconnect
       - DATABASE_PASS=rangeconnect
       - DATABASE_DB=rangeconnect
-      - DATABASE_SCHEMA=backend
     ports:
       - 8000:8000
