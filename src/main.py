@@ -38,7 +38,7 @@ app.include_router(api_router_v1, prefix="/api/v1")
 
 @app.get("/")
 async def root():
-    return {"message": "RangeConnectBackend have been started! - Please consult /docs"}
+    return {"message": "RangeConnectBackend have been started correctly!"}
 
 @app.get("/healthz", tags=["Deployment"])
 async def healthz():
