@@ -1,22 +1,21 @@
-version: '3'
-
-volumes:
-  db-data:
-    driver: local
-
+version: '3.8'
 services:
-  database:
-    image: 'postgres:latest'
-    ports:
-      - 5432:5432
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: rangeconnectuser # The PostgreSQL user (useful to connect to the database)
-      POSTGRES_PASSWORD: rangeconnectpassword # The PostgreSQL password (useful to connect to the database)
-      POSTGRES_DB: rangeconnectdb # The PostgreSQL default database (automatically created at first launch)
-  adminer:
-    image: adminer
+  rangeconnectserver:
+    build: .
+    hostname: 'rangeconnectserver'
+    container_name: 'rangeconnectserver'
     restart: always
-    ports:
-      - 8080:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - RABBITMQ_HOST=192.168.234.118
+      - RABBITMQ_USER=rangeconnect
+      - RABBITMQ_PASS=Uivq9ACXS49W
+      - DATABASE_HOST=postgres
+      - DATABASE_USER=rangeconnect
+      - DATABASE_PASS=rangeconnect
+      - DATABASE_DB=rangeconnect
+      - DATABASE_SCHEMA=rangeconnect
+    networks:
+      - range-connect
