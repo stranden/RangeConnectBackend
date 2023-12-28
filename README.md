@@ -1,2 +1,2 @@
 # RangeConnectBackend
-Backend for RangeConnect
+Backend for RangeConnectFrontend
