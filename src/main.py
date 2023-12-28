@@ -3,6 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from routes.v1.api import api_router as api_router_v1
+from routes.v1.ws import api_router as ws_router_v1
 from settings import Settings
 from util import logging
 
@@ -35,6 +36,7 @@ app = FastAPI(
 )
 
 app.include_router(api_router_v1, prefix="/api/v1")
+app.include_router(ws_router_v1, prefix="/ws/v1")
 
 @app.get("/", include_in_schema=False)
 async def root():

@@ -1,5 +1,10 @@
 from fastapi import APIRouter
-from routes.v1.endpoints import event, club, range, rcc_event
+from . import (
+    event,
+    club,
+    range,
+    rcc_event
+)
 
 api_router = APIRouter()
 api_router.include_router(event.router, prefix="/event")
