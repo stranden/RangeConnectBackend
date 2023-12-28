@@ -3,7 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from routes.v1.api import api_router as api_router_v1
-from routes.v1.ws import api_router as ws_router_v1
+from routes.v1.ws import ws_router as ws_router_v1
 from settings import Settings
 from util import logging
 
