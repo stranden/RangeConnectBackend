@@ -114,7 +114,7 @@ class DiciplineSeries(Base):
 
     id = Column(postgresql.UUID(as_uuid=True), primary_key=True, unique=True, index=True, default=uuid.uuid4)
     discipline = Column(postgresql.UUID(as_uuid=True), ForeignKey("discipline.id"), nullable=False, index=True)
-    serie = Column(Integer, nullable=False)
+    series = Column(Integer, nullable=False)
     name = Column(String, nullable=False)
     type = Column(Enum(SeriesType), nullable=False)
     time = Column(Integer, nullable=False)
