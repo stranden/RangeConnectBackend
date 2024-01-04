@@ -2,7 +2,7 @@ import uuid
 from enum import Enum as PyEnum, unique
 
 from sqlalchemy import (
-    TIMESTAMP,
+    Boolean,
     Column,
     Enum,
     Float,
@@ -11,6 +11,7 @@ from sqlalchemy import (
     Sequence,
     String,
     Table,
+    TIMESTAMP,
     func
 )
 from sqlalchemy.dialects import postgresql
@@ -21,6 +22,19 @@ from .base import AuditMixin, Base
 class SeriesType(PyEnum):
     SIGHT = "sight"
     MATCH = "match"
+    SHOOTOFF = "shootoff"
+
+
+class DisciplineStatus(PyEnum):
+    DISABLED = "disabled"
+    TESTING = "testing"
+    ENABLED = "enabled"
+
+
+class CompetitionStatus(PyEnum):
+    DISABLED = "disabled"
+    TESTING = "testing"
+    ENABLED = "enabled"
 
 
 class Country(Base):
@@ -73,8 +87,8 @@ class Event(Base):
     id = Column(postgresql.UUID(as_uuid=True), primary_key=True, unique=True, index=True, default=uuid.uuid4)
     shooting_club = Column(postgresql.UUID(as_uuid=True), ForeignKey("shooting_club.id"), nullable=True, index=True)
     name = Column(String, nullable=False)
-    startdate =  Column(TIMESTAMP, nullable=False)
-    enddate =  Column(TIMESTAMP, nullable=False)
+    startdate = Column(TIMESTAMP, nullable=False)
+    enddate = Column(TIMESTAMP, nullable=False)
     status = Column(Integer, nullable=False, default=0)
 
 
@@ -82,5 +96,43 @@ class EventRange(Base):
     __tablename__ = "event_range"
 
     id = Column(postgresql.UUID(as_uuid=True), primary_key=True, unique=True, index=True, default=uuid.uuid4)
-    event = Column(postgresql.UUID(as_uuid=True), ForeignKey("event.id"), nullable=True, index=True)
-    shooting_range = Column(postgresql.UUID(as_uuid=True), ForeignKey("shooting_range.id"), nullable=True, index=True)
+    event = Column(postgresql.UUID(as_uuid=True), ForeignKey("event.id"), nullable=False, index=True)
+    shooting_range = Column(postgresql.UUID(as_uuid=True), ForeignKey("shooting_range.id"), nullable=False, index=True)
+
+
+class Dicipline(Base):
+    __tablename__ = "dicipline"
+
+    id = Column(postgresql.UUID(as_uuid=True), primary_key=True, unique=True, index=True, default=uuid.uuid4)
+    name = Column(String, nullable=False)
+    shortname = Column(String, unique=True)
+    status = Column(Enum(DisciplineStatus), nullable=False)
+
+
+class DiciplineSeries(Base):
+    __tablename__ = "dicipline_series"
+
+    id = Column(postgresql.UUID(as_uuid=True), primary_key=True, unique=True, index=True, default=uuid.uuid4)
+    discipline = Column(postgresql.UUID(as_uuid=True), ForeignKey("discipline.id"), nullable=False, index=True)
+    serie = Column(Integer, nullable=False)
+    name = Column(String, nullable=False)
+    type = Column(Enum(SeriesType), nullable=False)
+    time = Column(Integer, nullable=False)
+    number_of_shots = Column(Integer, nullable=True)
+    single_shots = Column(Boolean, nullable=True)
+    elimination = Column(Boolean, nullable=True)
+    shooters_to_eliminate = Column(Integer, nullable=True)
+
+
+class Competition(Base):
+    __tablename__ = "competition"
+
+    id = Column(postgresql.UUID(as_uuid=True), primary_key=True, unique=True, index=True, default=uuid.uuid4)
+    event = Column(postgresql.UUID(as_uuid=True), ForeignKey("event.id"), nullable=False, index=True)
+    discipline = Column(postgresql.UUID(as_uuid=True), ForeignKey("discipline.id"), nullable=False, index=True)
+    name = Column(String, nullable=False)
+    shortname = Column(String, unique=False)
+    startdate = Column(TIMESTAMP, nullable=False)
+    enddate = Column(TIMESTAMP, nullable=False)
+    status = Column(Enum(CompetitionStatus), nullable=False)
+
