@@ -1,33 +1,26 @@
-import uuid
-from http import HTTPStatus
-from typing import List, Optional
+from typing import List
+from fastapi import APIRouter, Depends
+from sqlmodel import Session, select
 
-from fastapi import APIRouter, Depends, Response
-from fastapi.exceptions import HTTPException
-from models.club import (
-    ClubRequest
+from services.database.models.shooting_club import (
+    ShootingClubCreate,
+    ShootingClubRead
 )
-from services.database import models
-from sqlalchemy.orm import joinedload
-from sqlalchemy.orm.session import Session
 
 from ..dependencies import get_db
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ClubRequest])
-async def club(db: Session = Depends(get_db)):
-    """Gets all clubs
-    """
-    clubs: List[models.ShootingClub] = (db.query(models.ShootingClub)
-                               .all())
-
-    if not clubs:
-        return []
-
+@router.get("/", response_model=List[ShootingClubRead])
+async def get_clubs(db: Session = Depends(get_db)):
+    """Gets all clubs"""
+    clubs = db.exec(select(ShootingClubRead)).all()
     return clubs
 
 @router.get("/{club_id}")
-async def club_by_id(club_id):
-    return {"message": "GET specific club with ID", "club": club_id}
-    
+async def get_club_by_id(club_id: int, db: Session = Depends(get_db)):
+    """Gets specific club by ID"""
+    club = db.get(ShootingClubRead, club_id)
+    if not club:
+        return {"message": "Club not found"}
+    return club.dict()

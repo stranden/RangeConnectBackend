@@ -3,7 +3,7 @@ from functools import lru_cache
 from fastapi import Depends
 from services.database import DBSession
 from settings import Settings
-from sqlalchemy.orm.session import Session
+from sqlmodel import Session
 
 
 @lru_cache()

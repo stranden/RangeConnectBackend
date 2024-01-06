@@ -1,11 +1,12 @@
 from settings import Settings
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlmodel import create_engine, Session
 
-from .models import *  # noqa
-
+from services.database.models import *  # noqa
 
 settings = Settings()
-engine = create_engine(settings.DATABASE_URI, pool_pre_ping=True, future=True)  # echo=True to view sql queries in logs
 
-DBSession: Session = sessionmaker(bind=engine, future=True)
+# Create a SQLModel-compatible engine
+engine = create_engine(settings.DATABASE_URI, pool_pre_ping=True)
+
+# Use SQLModel's Session class for database sessions
+DBSession: Session = Session(engine)
