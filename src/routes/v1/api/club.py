@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
-from services.database.models.shooting_club import (
+from services.database.models import (
     ShootingClubCreate,
     ShootingClubRead
 )
@@ -12,6 +12,7 @@ from ..dependencies import get_db
 router = APIRouter()
 
 @router.get("/", response_model=List[ShootingClubRead])
+#@router.get("/")
 async def get_clubs(db: Session = Depends(get_db)):
     """Gets all clubs"""
     clubs = db.exec(select(ShootingClubRead)).all()
