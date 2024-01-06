@@ -12,7 +12,6 @@ from ..dependencies import get_db
 router = APIRouter()
 
 @router.get("/", response_model=List[ShootingClubRead])
-#@router.get("/")
 async def get_clubs(db: Session = Depends(get_db)):
     """Gets all clubs"""
     clubs = db.exec(select(ShootingClubRead)).all()
