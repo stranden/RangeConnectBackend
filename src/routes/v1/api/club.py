@@ -23,4 +23,4 @@ async def get_club_by_id(club_id: int, db: Session = Depends(get_db)):
     club = db.get(ShootingClubRead, club_id)
     if not club:
         return {"message": "Club not found"}
-    return club.dict()
+    return club.model_dump()

@@ -3,20 +3,20 @@ from typing import Optional
 
 import uuid
 from ..base import AuditMixin, Base
+from .enum import DisciplineStatus
     
 
-class ShootingClubBase(Base, SQLModel):
+class DisciplineBase(Base, SQLModel):
     name: str
     shortname: str
+    status: DisciplineStatus
 
-class ShootingClub(ShootingClubBase, SQLModel, table=True):
-    __tablename__ = "shooting_club"
+class Discipline(DisciplineBase, SQLModel, table=True):
+    __tablename__ = "discipline"
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
-
-    country_id: uuid.UUID = Field(foreign_key="country.id")
-    
-class ShootingClubCreate(ShootingClubBase):
+  
+class DisciplineCreate(DisciplineBase):
     pass
 
-class ShootingClubRead(ShootingClubBase):
+class DisciplineRead(DisciplineBase):
     id: uuid.UUID

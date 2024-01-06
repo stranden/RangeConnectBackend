@@ -10,7 +10,6 @@ class CountryBase(Base, SQLModel):
 
 class Country(CountryBase, SQLModel, table=True):
     __tablename__ = "country"
-
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     
 class CountryCreate(CountryBase):

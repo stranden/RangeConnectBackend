@@ -10,7 +10,6 @@ class RangeManufactorBase(Base, SQLModel):
 
 class RangeManufactor(RangeManufactorBase, SQLModel, table=True):
     __tablename__ = "range_manufactor"
-
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     
 class RangeManufactorCreate(RangeManufactorBase):

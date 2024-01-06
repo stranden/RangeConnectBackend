@@ -14,3 +14,10 @@ class CompetitionStatus(Enum):
     DISABLED = "disabled"
     TESTING = "testing"
     ENABLED = "enabled"
+
+class EventStatus(Enum):
+    CANCELLED = "cancelled"
+    FINISHED = "finished"
+    PLANNED = "planned"
+    STARTED = "started"
+    
