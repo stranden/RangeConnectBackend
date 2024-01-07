@@ -7,6 +7,3 @@ settings = Settings()
 
 # Create a SQLModel-compatible engine
 engine = create_engine(settings.DATABASE_URI, pool_pre_ping=True)
-
-# Use SQLModel's Session class for database sessions
-#DBSession: Session = Session(engine)
