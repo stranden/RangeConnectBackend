@@ -1,7 +1,7 @@
 from functools import lru_cache
 
 from fastapi import Depends
-from services.database import DBSession
+from services.database import engine
 from settings import Settings
 from sqlmodel import Session
 
@@ -11,9 +11,6 @@ def get_settings():
     return Settings()
 
 
-def get_db() -> Session:
-    db = DBSession()
-    try:
-        yield db
-    finally:
-        db.close()
+def get_db():
+    with Session(engine) as session:
+        yield session

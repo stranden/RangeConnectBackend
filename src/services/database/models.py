@@ -1,30 +1,49 @@
-from sqlmodel import Field, Relationship, ForeignKey, SQLModel
+import uuid
+from enum import Enum
+from sqlmodel import Field, Relationship
 from typing import Optional
 
-import uuid
 from .base import Base
-from .shared.enum import (
-    CompetitionStatus,
-    DisciplineStatus,
-    EventStatus,
-    SeriesType
-)
 
-class EventRangeLink(Base, SQLModel, table=True):
+class SeriesType(Enum):
+    SIGHT = "sight"
+    MATCH = "match"
+    SHOOTOFF = "shootoff"
+
+class DisciplineStatus(Enum):
+    DISABLED = "disabled"
+    TESTING = "testing"
+    ENABLED = "enabled"
+
+class CompetitionStatus(Enum):
+    DISABLED = "disabled"
+    TESTING = "testing"
+    ENABLED = "enabled"
+
+class EventStatus(Enum):
+    CANCELLED = "cancelled"
+    FINISHED = "finished"
+    PLANNED = "planned"
+    STARTED = "started"
+
+
+class EventRangeLink(Base, table=True):
     __tablename__ = "event_range_link"
     event_id: uuid.UUID = Field(foreign_key="event.id", primary_key=True)
     shooting_range_id: uuid.UUID = Field(foreign_key="shooting_range.id", primary_key=True)
 
 
  
-class CountryBase(Base, SQLModel):
+class CountryBase(Base):
+    __tablename__ = "country"
     code: str
     name: str
 
 class Country(CountryBase, table=True):
-    __tablename__ = "country"
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     
+    shooting_club: "ShootingClub" = Relationship(back_populates="country")
+
 class CountryCreate(CountryBase):
     pass
 
@@ -33,7 +52,7 @@ class CountryRead(CountryBase):
 
 
 
-class ShootingClubBase(Base, SQLModel):
+class ShootingClubBase(Base):
     name: str
     shortname: str
 
@@ -43,7 +62,10 @@ class ShootingClub(ShootingClubBase, table=True):
 
     country_id: uuid.UUID = Field(foreign_key="country.id")
     country: Country = Relationship(back_populates="shooting_club")
-    
+
+    shooting_range: "ShootingRange" = Relationship(back_populates="shooting_club")
+    event: "Event" = Relationship(back_populates="shooting_club")
+
 class ShootingClubCreate(ShootingClubBase):
     pass
 
@@ -52,13 +74,15 @@ class ShootingClubRead(ShootingClubBase):
 
 
 
-class RangeManufactorBase(Base, SQLModel):
+class RangeManufactorBase(Base):
     name: str
 
 class RangeManufactor(RangeManufactorBase, table=True):
     __tablename__ = "range_manufactor"
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     
+    shooting_range: "ShootingRange" = Relationship(back_populates="range_manufactor")
+
 class RangeManufactorCreate(RangeManufactorBase):
     pass
 
@@ -67,7 +91,7 @@ class RangeManufactorRead(RangeManufactorBase):
 
 
 
-class ShootingRangeBase(Base, SQLModel):
+class ShootingRangeBase(Base):
     name: str
     lanes: int
     first_lane: str
@@ -90,7 +114,7 @@ class ShootingRangeRead(ShootingRangeBase):
 
 
 
-class DisciplineBase(Base, SQLModel):
+class DisciplineBase(Base):
     name: str
     shortname: str
     status: DisciplineStatus
@@ -99,6 +123,9 @@ class Discipline(DisciplineBase, table=True):
     __tablename__ = "discipline"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
   
+    discipline_series: "DisciplineSeries" = Relationship(back_populates="discipline")
+    competition: "Competition" = Relationship(back_populates="discipline")
+
 class DisciplineCreate(DisciplineBase):
     pass
 
@@ -107,7 +134,7 @@ class DisciplineRead(DisciplineBase):
 
 
 
-class DisciplineSeriesBase(Base, SQLModel):
+class DisciplineSeriesBase(Base):
     series: int
     name: str
     type: SeriesType
@@ -132,7 +159,7 @@ class DisciplineSeriesRead(DisciplineSeriesBase):
 
 
     
-class EventBase(Base, SQLModel):
+class EventBase(Base):
     name: str
     startdate: int
     enddate: int
@@ -153,7 +180,7 @@ class EventRead(EventBase):
 
 
 
-class CompetitionBase(Base, SQLModel):
+class CompetitionBase(Base):
     event: uuid.UUID
     name: str
     shortname: Optional[str]
