@@ -10,7 +10,7 @@ def create_club(db: Session, shooting_club: ShootingClub):
     return db_shooting_club
 
 def read_club(db: Session, shooting_club_id: uuid.UUID):
-    return db.exec(select(ShootingClub).filter(ShootingClub.id == shooting_club_id).first())
+    return db.exec(select(ShootingClub).filter(ShootingClub.id == shooting_club_id)).first()
 
 def read_clubs(db: Session, offset: int = 0, limit: int = 100):
     return db.exec(select(ShootingClub).offset(offset).limit(limit)).all()
