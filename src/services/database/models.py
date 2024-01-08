@@ -1,7 +1,9 @@
-import uuid
-from enum import Enum
 from sqlmodel import Field, Relationship
 from typing import Optional
+
+import uuid
+from enum import Enum
+from datetime import datetime
 
 from .base import Base
 
@@ -54,7 +56,7 @@ class CountryRead(CountryBase):
 
 class ShootingClubBase(Base):
     name: str
-    shortname: str
+    shortname: Optional[str]
 
 class ShootingClub(ShootingClubBase, table=True):
     __tablename__ = "shooting_club"
@@ -161,8 +163,8 @@ class DisciplineSeriesRead(DisciplineSeriesBase):
     
 class EventBase(Base):
     name: str
-    startdate: int
-    enddate: int
+    startdate: datetime
+    enddate: Optional[datetime]
     status: EventStatus
 
 class Event(EventBase, table=True):
@@ -184,8 +186,8 @@ class CompetitionBase(Base):
     event: uuid.UUID
     name: str
     shortname: Optional[str]
-    startdate: int
-    enddate: int
+    startdate: datetime
+    enddate: Optional[datetime]
     status: CompetitionStatus
 
 class Competition(CompetitionBase, table=True):

@@ -21,9 +21,9 @@ async def read_club(item_id: int, db: Session = Depends(get_db)):
     return db_club
 
 @router.get("/", response_model=List[ShootingClubRead])
-async def read_club(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+async def read_club(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """Gets all clubs"""
-    return crud.read_clubs(db, skip=skip, limit=limit)
+    return crud.read_clubs(db, offset=offset, limit=limit)
 
 #@router.get("/", response_model=List[ShootingClubRead])
 #async def get_clubs(db: Session = Depends(get_db)):
