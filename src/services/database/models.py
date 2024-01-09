@@ -18,9 +18,11 @@ class DisciplineStatus(Enum):
     ENABLED = "enabled"
 
 class CompetitionStatus(Enum):
-    DISABLED = "disabled"
-    TESTING = "testing"
-    ENABLED = "enabled"
+    CANCELLED = "cancelled"
+    DELAYED = "delayed"
+    FINISHED = "finished"
+    PLANNED = "planned"
+    STARTED = "started"
 
 class EventStatus(Enum):
     CANCELLED = "cancelled"
@@ -183,7 +185,6 @@ class EventRead(EventBase):
 
 
 class CompetitionBase(Base):
-    event: uuid.UUID
     name: str
     shortname: Optional[str]
     startdate: datetime
@@ -194,6 +195,9 @@ class Competition(CompetitionBase, table=True):
     __tablename__ = "competition"
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
 
+    event_id: uuid.UUID = Field(foreign_key="event.id")
+    event: Discipline = Relationship(back_populates="competition")
+
     discipline_id: uuid.UUID = Field(foreign_key="discipline.id")
     discipline: Discipline = Relationship(back_populates="competition")
     
@@ -202,3 +206,4 @@ class CompetitionCreate(CompetitionBase):
 
 class CompetitionRead(CompetitionBase):
     id: uuid.UUID
+    event: uuid.UUID
