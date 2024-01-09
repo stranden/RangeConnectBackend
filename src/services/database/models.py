@@ -29,9 +29,9 @@ class EventStatus(Enum):
     STARTED = "started"
 
 
-class EventRangeLink(Base, table=True):
-    __tablename__ = "event_range_link"
-    event_id: uuid.UUID = Field(foreign_key="event.id", primary_key=True)
+class CompetitionRangeLink(Base, table=True):
+    __tablename__ = "competition_range_link"
+    competition_id: uuid.UUID = Field(foreign_key="competition.id", primary_key=True)
     shooting_range_id: uuid.UUID = Field(foreign_key="shooting_range.id", primary_key=True)
 
 
