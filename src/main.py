@@ -42,11 +42,11 @@ app.include_router(ws_router_v1, prefix="/ws/v1")
 async def root():
     return {"message": "RangeConnectBackend have been started correctly!"}
 
-@app.get("/healthz", tags=["Deployment"])
+@app.get("/healthz", include_in_schema=False)
 async def healthz():
     return {"message": "Application ready"}
 
-@app.get("/metrics", status_code=200, tags=["Deployment"])
+@app.get("/metrics", status_code=200, include_in_schema=False)
 async def metrics():
     return {"message": "Lots of metrics here"}
 
