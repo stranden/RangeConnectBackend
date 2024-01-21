@@ -19,22 +19,27 @@ depends_on = None
 
 
 # Generate a random UUID
-event_uuid = uuid.uuid4()
+event_1_uuid = uuid.uuid4()
+event_2_uuid = uuid.uuid4()
 
 shooting_club = [
     ('Viborg Skytteforening', 'VSF', str(uuid.uuid4()), 'DK'),
+    ('Aarhus Riffel Klub', 'ÅRK', str(uuid.uuid4()), 'DK'),
 ]
 
 shooting_range = [
     ('10m', 10, '1', 'EBA2ED57-BF56-47DE-91F8-DEA032843FE3', 'Viborg Skytteforening', 'Megalink'),
+    ('10m', 10, '1', str(uuid.uuid4()), 'Aarhus Riffel Klub', 'SIUS'),
 ]
 
 event = [
-    ('Viborg Open Air', '2024-01-08T14:30:00', 'PLANNED', str(event_uuid), 'Viborg Skytteforening'),
+    ('Viborg Open Air', '2024-01-08T14:30:00', 'PLANNED', str(event_1_uuid), 'Viborg Skytteforening'),
+    ('Denmark Open Air', '2024-02-08T14:30:00', 'PLANNED', str(event_2_uuid), 'Aarhus Riffel Klub'),
 ]
 
 competition = [
-    (str(event_uuid), '10m AR Final - Men', '10M_AR_FINAL_M', '2024-01-09T16:30:00', 'PLANNED', str(uuid.uuid4()), 'ISSF_10M_AR_FINAL'),
+    (str(event_1_uuid), '10m AR Final - Men', '10M_AR_FINAL_M', '2024-01-09T16:30:00', 'PLANNED', str(uuid.uuid4()), 'ISSF_10M_AR_FINAL'),
+    (str(event_1_uuid), '10m AR Final - Women', '10M_AR_FINAL_W', '2024-01-09T18:00:00', 'PLANNED', str(uuid.uuid4()), 'ISSF_10M_AR_FINAL'),
 ]
 
 competition_range_link = [

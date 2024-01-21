@@ -7,19 +7,21 @@ from sqlmodel import Session
 from services.database.crud import event as crud
 from services.database.models import (
     EventCreate,
-    EventRead
+    EventRead,
+    EventReadWithCompetitions,
+    Event
 )
 
 from ..dependencies import get_db
 
 router = APIRouter()
 
-@router.get("/", response_model=List[EventRead])
+@router.get("/", response_model=List[EventReadWithCompetitions])
 async def read_events(offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """Get all events"""
     return crud.read_events(db, offset=offset, limit=limit)
 
-@router.get("/{id}", response_model=EventRead)
+@router.get("/{id}", response_model=EventReadWithCompetitions)
 async def read_event(id: uuid.UUID, db: Session = Depends(get_db)):
     """Get specific event by ID"""
     db_event = crud.read_event(db, id)

@@ -4,7 +4,7 @@ from datetime import datetime
 
 settings = Settings()
 
-class Base(SQLModel, table=False):
+class Base(SQLModel):
     metadata = MetaData(schema=settings.DATABASE_SCHEMA)
 
 class AuditMixin(SQLModel):

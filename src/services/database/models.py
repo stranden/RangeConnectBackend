@@ -1,5 +1,5 @@
 from sqlmodel import Field, Relationship
-from typing import Optional
+from typing import Optional, List
 
 import uuid
 from enum import Enum
@@ -176,6 +176,8 @@ class Event(EventBase, table=True):
     shooting_club_id: uuid.UUID = Field(foreign_key="shooting_club.id")
     shooting_club: ShootingClub = Relationship(back_populates="event")
 
+    competitions: List["Competition"] = Relationship(back_populates="event")
+
 class EventCreate(EventBase):
     pass
 
@@ -196,7 +198,7 @@ class Competition(CompetitionBase, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
 
     event_id: uuid.UUID = Field(foreign_key="event.id")
-    event: Discipline = Relationship(back_populates="competition")
+    event: Event = Relationship(back_populates="competitions")
 
     discipline_id: uuid.UUID = Field(foreign_key="discipline.id")
     discipline: Discipline = Relationship(back_populates="competition")
@@ -206,4 +208,8 @@ class CompetitionCreate(CompetitionBase):
 
 class CompetitionRead(CompetitionBase):
     id: uuid.UUID
-    event: uuid.UUID
+    discipline_id: uuid.UUID
+
+
+class EventReadWithCompetitions(EventRead):
+    competitions: List[CompetitionRead] = []
