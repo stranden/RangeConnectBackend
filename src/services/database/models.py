@@ -1,9 +1,10 @@
-from sqlmodel import Field, Relationship
+from sqlmodel import SQLModel, MetaData, Field, Relationship
 from typing import Optional, List
 
 import uuid
-from enum import Enum
 from datetime import datetime
+from decimal import Decimal
+from enum import Enum
 
 from .base import Base
 
@@ -30,14 +31,64 @@ class EventStatus(Enum):
     PLANNED = "planned"
     STARTED = "started"
 
+### ------------------------------------------------
+    
+class LinkCompetitionRangeEventShooter(Base, table=True):
+    __tablename__ = "link_competition_range_event_shooter"
+    range_event_shooter_id: Optional[uuid.UUID] = Field(default=None, foreign_key="rcc.range_event_shooter.id", primary_key=True)
+    competition_id: Optional[uuid.UUID] = Field(default=None, foreign_key="competition.id", primary_key=True)
 
-class CompetitionRangeLink(Base, table=True):
-    __tablename__ = "competition_range_link"
-    competition_id: uuid.UUID = Field(foreign_key="competition.id", primary_key=True)
-    shooting_range_id: uuid.UUID = Field(foreign_key="shooting_range.id", primary_key=True)
+### ------------------------------------------------
 
+class RangeEventShooterBase(SQLModel):
+    metadata = MetaData(schema="rcc")
 
- 
+    firing_point: str
+    name: str
+    club: Optional[str]
+    group: Optional[str]
+
+class RangeEventShooter(RangeEventShooterBase, table=True):
+    __tablename__ = "range_event_shooter"
+    id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
+    shooting_range_id: uuid.UUID = Field(primary_key=True)
+
+    #competition: Optional["Competition"] = Relationship(back_populates="shooters", sa_relationship=[{"primaryjoin": "Competition.shooting_range_id==RangeEventShooter.shooting_range_id"}])
+    competitions: List["Competition"] = Relationship(back_populates="shooters", link_model=LinkCompetitionRangeEventShooter)
+
+class RangeEventShooterCreate(RangeEventShooterBase):
+    pass
+
+class RangeEventShooterRead(RangeEventShooterBase):
+    id: uuid.UUID
+
+### ------------------------------------------------
+
+class RangeEventShotBase(SQLModel):
+    metadata = MetaData(schema="rcc")
+
+    firing_point: str
+    series_type: SeriesType
+    shot_id: int
+    shot_value: Decimal
+    shot_value_decimal: Decimal
+    x_coord: Decimal
+    y_coord: Decimal
+
+class RangeEventShot(RangeEventShotBase, table=True):
+    __tablename__ = "range_event_shot"
+    id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
+
+    shooting_range_id: uuid.UUID
+
+class RangeEventShooterCreate(RangeEventShotBase):
+    pass
+
+class RangeEventShooterRead(RangeEventShotBase):
+    id: uuid.UUID
+
+### ------------------------------------------------
+    
 class CountryBase(Base):
     __tablename__ = "country"
     code: str
@@ -54,7 +105,7 @@ class CountryCreate(CountryBase):
 class CountryRead(CountryBase):
     id: uuid.UUID
 
-
+### ------------------------------------------------
 
 class ShootingClubBase(Base):
     name: str
@@ -76,7 +127,7 @@ class ShootingClubCreate(ShootingClubBase):
 class ShootingClubRead(ShootingClubBase):
     id: uuid.UUID
 
-
+### ------------------------------------------------
 
 class RangeManufactorBase(Base):
     name: str
@@ -93,7 +144,7 @@ class RangeManufactorCreate(RangeManufactorBase):
 class RangeManufactorRead(RangeManufactorBase):
     id: uuid.UUID
 
-
+### ------------------------------------------------
 
 class ShootingRangeBase(Base):
     name: str
@@ -110,13 +161,16 @@ class ShootingRange(ShootingRangeBase, table=True):
     range_manufactor_id: uuid.UUID = Field(foreign_key="range_manufactor.id")
     range_manufactor: RangeManufactor = Relationship(back_populates="shooting_range")
 
+    competition: Optional["Competition"] = Relationship(back_populates="shooting_range")
+    
+
 class ShootingRangeCreate(ShootingRangeBase):
     pass
 
 class ShootingRangeRead(ShootingRangeBase):
     id: uuid.UUID
 
-
+### ------------------------------------------------
 
 class DisciplineBase(Base):
     name: str
@@ -127,7 +181,7 @@ class Discipline(DisciplineBase, table=True):
     __tablename__ = "discipline"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
   
-    discipline_series: "DisciplineSeries" = Relationship(back_populates="discipline")
+    series: List["DisciplineSeries"] = Relationship(back_populates="discipline")
     competition: "Competition" = Relationship(back_populates="discipline")
 
 class DisciplineCreate(DisciplineBase):
@@ -136,7 +190,7 @@ class DisciplineCreate(DisciplineBase):
 class DisciplineRead(DisciplineBase):
     id: uuid.UUID
 
-
+### ------------------------------------------------
 
 class DisciplineSeriesBase(Base):
     series: int
@@ -153,7 +207,7 @@ class DisciplineSeries(DisciplineSeriesBase, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
 
     discipline_id: uuid.UUID = Field(foreign_key="discipline.id")
-    discipline: Discipline = Relationship(back_populates="discipline_series")
+    discipline: Discipline = Relationship(back_populates="series")
 
 class DisciplineSeriesCreate(DisciplineSeriesBase):
     pass
@@ -161,7 +215,7 @@ class DisciplineSeriesCreate(DisciplineSeriesBase):
 class DisciplineSeriesRead(DisciplineSeriesBase):
     id: uuid.UUID
 
-
+### ------------------------------------------------
     
 class EventBase(Base):
     name: str
@@ -184,7 +238,7 @@ class EventCreate(EventBase):
 class EventRead(EventBase):
     id: uuid.UUID
 
-
+### ------------------------------------------------
 
 class CompetitionBase(Base):
     name: str
@@ -202,14 +256,33 @@ class Competition(CompetitionBase, table=True):
 
     discipline_id: uuid.UUID = Field(foreign_key="discipline.id")
     discipline: Discipline = Relationship(back_populates="competition")
-    
+
+    shooting_range_id: Optional[uuid.UUID] = Field(foreign_key="shooting_range.id")
+    shooting_range: ShootingRange = Relationship(back_populates="competition")
+
+    #shooters: List[RangeEventShooter] = Relationship(back_populates="competition", sa_relationship=[{"primaryjoin": "Competition.shooting_range_id==RangeEventShooter.shooting_range_id"}])
+    #shooters: List[RangeEventShooter] = Relationship(back_populates="competition")
+    shooters: List["Competition"] = Relationship(back_populates="competitions", link_model=LinkCompetitionRangeEventShooter)
+
 class CompetitionCreate(CompetitionBase):
     pass
 
 class CompetitionRead(CompetitionBase):
     id: uuid.UUID
-    discipline_id: uuid.UUID
+    discipline: Optional[Discipline] = None
+    shooting_range: Optional[ShootingRange] = None
 
+### ------------------------------------------------
+
+class ShootingRangeReadWithShooters(ShootingRangeRead):
+    shooters: Optional[RangeEventShooter] = None
 
 class EventReadWithCompetitions(EventRead):
     competitions: List[CompetitionRead] = []
+
+class DisciplineReadWithDisciplineSeries(DisciplineRead):
+    series: List[DisciplineSeriesRead] = []
+
+class CompetitionReadWithRangeEventShooters(CompetitionRead):
+    shooters: List[RangeEventShooter] = []
+
