@@ -6,7 +6,7 @@ from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 
-from .base import Base
+from .base import AuditMixin, Base
 
 class SeriesType(Enum):
     SIGHT = "sight"
@@ -35,15 +35,15 @@ class EventStatus(Enum):
     
 class LinkCompetitionRangeEventShooter(Base, table=True):
     __tablename__ = "link_competition_range_event_shooter"
-    range_event_shooter_id: Optional[uuid.UUID] = Field(default=None, foreign_key="rcc.range_event_shooter.id", primary_key=True)
-    competition_id: Optional[uuid.UUID] = Field(default=None, foreign_key="competition.id", primary_key=True)
+    range_event_shooter_id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, foreign_key="range_event_shooter.id", primary_key=True)
+    competition_id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, foreign_key="competition.id", primary_key=True)
 
 ### ------------------------------------------------
 
-class RangeEventShooterBase(SQLModel):
-    metadata = MetaData(schema="rcc")
+class RangeEventShooterBase(AuditMixin, Base):
 
     firing_point: str
+    start_number: str
     name: str
     club: Optional[str]
     group: Optional[str]
@@ -51,9 +51,8 @@ class RangeEventShooterBase(SQLModel):
 class RangeEventShooter(RangeEventShooterBase, table=True):
     __tablename__ = "range_event_shooter"
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
-    shooting_range_id: uuid.UUID = Field(primary_key=True)
+    shooting_range_id: uuid.UUID
 
-    #competition: Optional["Competition"] = Relationship(back_populates="shooters", sa_relationship=[{"primaryjoin": "Competition.shooting_range_id==RangeEventShooter.shooting_range_id"}])
     competitions: List["Competition"] = Relationship(back_populates="shooters", link_model=LinkCompetitionRangeEventShooter)
 
 class RangeEventShooterCreate(RangeEventShooterBase):
@@ -64,10 +63,10 @@ class RangeEventShooterRead(RangeEventShooterBase):
 
 ### ------------------------------------------------
 
-class RangeEventShotBase(SQLModel):
-    metadata = MetaData(schema="rcc")
+class RangeEventShotBase(AuditMixin, Base):
 
     firing_point: str
+    start_number: str
     series_type: SeriesType
     shot_id: int
     shot_value: Decimal
@@ -260,9 +259,7 @@ class Competition(CompetitionBase, table=True):
     shooting_range_id: Optional[uuid.UUID] = Field(foreign_key="shooting_range.id")
     shooting_range: ShootingRange = Relationship(back_populates="competition")
 
-    #shooters: List[RangeEventShooter] = Relationship(back_populates="competition", sa_relationship=[{"primaryjoin": "Competition.shooting_range_id==RangeEventShooter.shooting_range_id"}])
-    #shooters: List[RangeEventShooter] = Relationship(back_populates="competition")
-    shooters: List["Competition"] = Relationship(back_populates="competitions", link_model=LinkCompetitionRangeEventShooter)
+    shooters: List[RangeEventShooter] = Relationship(back_populates="competitions", link_model=LinkCompetitionRangeEventShooter)
 
 class CompetitionCreate(CompetitionBase):
     pass

@@ -272,6 +272,37 @@ def upgrade() -> None:
     schema='rcb'
     )
     op.create_index(op.f('ix_rcb_discipline_id'), 'discipline', ['id'], unique=False, schema='rcb')
+    op.create_table('range_event_shooter',
+    sa.Column('created_date', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('modified_date', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('firing_point', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('start_number', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('club', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+    sa.Column('group', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+    sa.Column('id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
+    sa.Column('shooting_range_id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    schema='rcb'
+    )
+    op.create_index(op.f('ix_rcb_range_event_shooter_id'), 'range_event_shooter', ['id'], unique=False, schema='rcb')
+    op.create_table('range_event_shot',
+    sa.Column('created_date', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('modified_date', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('firing_point', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('start_number', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('series_type', sa.Enum('SIGHT', 'MATCH', 'SHOOTOFF', name='seriestype'), nullable=False),
+    sa.Column('shot_id', sa.Integer(), nullable=False),
+    sa.Column('shot_value', sa.Numeric(), nullable=False),
+    sa.Column('shot_value_decimal', sa.Numeric(), nullable=False),
+    sa.Column('x_coord', sa.Numeric(), nullable=False),
+    sa.Column('y_coord', sa.Numeric(), nullable=False),
+    sa.Column('id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
+    sa.Column('shooting_range_id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    schema='rcb'
+    )
+    op.create_index(op.f('ix_rcb_range_event_shot_id'), 'range_event_shot', ['id'], unique=False, schema='rcb')
     op.create_table('range_manufactor',
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
@@ -346,15 +377,15 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     schema='rcb'
     )
+    op.create_index(op.f('ix_rcb_competition_id'), 'competition', ['id'], unique=False, schema='rcb')
     op.create_table('link_competition_range_event_shooter',
     sa.Column('range_event_shooter_id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
     sa.Column('competition_id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
-    sa.ForeignKeyConstraint(['range_event_shooter_id'], ['rcc.range_event_shooter.id'], ),
     sa.ForeignKeyConstraint(['competition_id'], ['rcb.competition.id'], ),
+    sa.ForeignKeyConstraint(['range_event_shooter_id'], ['rcb.range_event_shooter.id'], ),
     sa.PrimaryKeyConstraint('range_event_shooter_id', 'competition_id'),
     schema='rcb'
     )
-    op.create_index(op.f('ix_rcb_competition_id'), 'competition', ['id'], unique=False, schema='rcb')
     for data in countries:
         op.execute(
             f"INSERT INTO country (code, name, id) VALUES "
@@ -393,6 +424,10 @@ def downgrade() -> None:
     op.drop_table('discipline_series', schema='rcb')
     op.drop_index(op.f('ix_rcb_range_manufactor_id'), table_name='range_manufactor', schema='rcb')
     op.drop_table('range_manufactor', schema='rcb')
+    op.drop_index(op.f('ix_rcb_range_event_shot_id'), table_name='range_event_shot', schema='rcb')
+    op.drop_table('range_event_shot', schema='rcb')
+    op.drop_index(op.f('ix_rcb_range_event_shooter_id'), table_name='range_event_shooter', schema='rcb')
+    op.drop_table('range_event_shooter', schema='rcb')
     op.drop_index(op.f('ix_rcb_discipline_id'), table_name='discipline', schema='rcb')
     op.drop_table('discipline', schema='rcb')
     op.drop_index(op.f('ix_rcb_country_id'), table_name='country', schema='rcb')
