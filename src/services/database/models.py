@@ -283,3 +283,6 @@ class DisciplineReadWithDisciplineSeries(DisciplineRead):
 class CompetitionReadWithRangeEventShooters(CompetitionRead):
     shooters: List[RangeEventShooter] = []
 
+class CompetitionReadWithRangeEventShootersAndRangeEventShots(CompetitionReadWithRangeEventShooters):
+    shots: List[RangeEventShot] = []
+

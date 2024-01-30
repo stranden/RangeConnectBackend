@@ -14,3 +14,6 @@ def read_competitions(db: Session, offset: int = 0, limit: int = 100):
 
 def read_competition(db: Session, competition_id: uuid.UUID):
     return db.exec(select(Competition).filter(Competition.id == competition_id)).first()
+
+def read_competition_shots(db: Session, competition_id: uuid.UUID):
+    return db.exec(select(Competition).filter(Competition.id == competition_id)).first()
