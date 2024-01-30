@@ -10,8 +10,6 @@ def create_competition(db: Session, competition: Competition):
     return db_competition
 
 def read_competitions(db: Session, offset: int = 0, limit: int = 100):
-    #return db.exec(select(Competition, RangeEventShooter).join(RangeEventShooter,Competition.shooting_range_id == RangeEventShooter.shooting_range_id).offset(offset).limit(limit)).all()
-    #return db.exec(select(Competition).join_from(Competition,RangeEventShooter,Competition.shooting_range_id == RangeEventShooter.shooting_range_id).offset(offset).limit(limit)).all()
     return db.exec(select(Competition).offset(offset).limit(limit)).all()
 
 def read_competition(db: Session, competition_id: uuid.UUID):
